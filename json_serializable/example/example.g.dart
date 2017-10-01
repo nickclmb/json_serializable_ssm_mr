@@ -33,25 +33,57 @@ abstract class _$PersonSerializerMixin {
   DateTime get lastOrder;
   List<Order> get orders;
   Map<String, Person> get relatedPeople;
-  Map<String, dynamic> toJson() {
-    var val = <String, dynamic>{
-      'firstName': firstName,
-    };
+  Map<String, dynamic> toJson() => new _PersonJsonMapWrapper(this);
+}
 
-    void writeNotNull(String key, dynamic value) {
-      if (value != null) {
-        val[key] = value;
-      }
+abstract class _JsonMapWrapper extends MapBase<String, dynamic> {
+  @override
+  void operator []=(String key, dynamic value) =>
+      throw new UnsupportedError('nope!');
+
+  @override
+  void clear() => throw new UnsupportedError('nope!');
+
+  @override
+  dynamic remove(Object key) => throw new UnsupportedError('nope!');
+}
+
+class _PersonJsonMapWrapper extends _JsonMapWrapper {
+  final _$PersonSerializerMixin _person;
+
+  _PersonJsonMapWrapper(this._person);
+
+  @override
+  dynamic operator [](Object key) {
+    switch (key as String) {
+      case 'firstName':
+        return _person.firstName;
+      case 'date-of-birth':
+        return _person.dateOfBirth?.toIso8601String();
+      case 'orders':
+        return _person.orders;
+      case 'middleName':
+        return _person.middleName;
+      case 'last-order':
+        return _person.lastOrder?.toIso8601String();
+      case 'lastName':
+        return _person.lastName;
+      case 'related-people':
+        return _person.relatedPeople;
     }
-
-    writeNotNull('middleName', middleName);
-    val['lastName'] = lastName;
-    val['date-of-birth'] = dateOfBirth.toIso8601String();
-    val['last-order'] = lastOrder?.toIso8601String();
-    val['orders'] = orders;
-    val['related-people'] = relatedPeople;
-    return val;
+    return null;
   }
+
+  @override
+  Iterable<String> get keys => const [
+        'firstName',
+        'middleName',
+        'lastName',
+        'date-of-birth',
+        'last-order',
+        'orders',
+        'related-people'
+      ];
 }
 
 Order _$OrderFromJson(Map<String, dynamic> json) => new Order()
@@ -67,7 +99,9 @@ abstract class _$OrderSerializerMixin {
   int get itemNumber;
   bool get isRushed;
   Item get item;
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson()  => new _OrderJsonMapWrapper(this);
+
+  /*{
     var val = <String, dynamic>{};
 
     void writeNotNull(String key, dynamic value) {
@@ -81,7 +115,37 @@ abstract class _$OrderSerializerMixin {
     writeNotNull('isRushed', isRushed);
     writeNotNull('item', item);
     return val;
+  }*/
+}
+
+
+class _OrderJsonMapWrapper extends _JsonMapWrapper {
+  final _$OrderSerializerMixin order;
+
+  _OrderJsonMapWrapper(this.order);
+
+  @override
+  dynamic operator [](Object key) {
+    switch (key as String) {
+      case 'count':
+          return order.count;
+      case 'itemNumber':
+        return order.itemNumber;
+      case 'isRushed':
+        return order.isRushed;
+        // ignoring item
+
+    }
+    return null;
   }
+
+  @override
+  Iterable<String> get keys => const [
+    'count',
+    'itemNumber',
+    'isRushed'
+    // skipping for demo - 'item'
+  ];
 }
 
 Item _$ItemFromJson(Map<String, dynamic> json) => new Item()

@@ -5,6 +5,8 @@
 // ignore_for_file: annotate_overrides
 library json_serializable.example;
 
+import 'dart:collection';
+
 import 'package:json_annotation/json_annotation.dart';
 part 'example.g.dart';
 
