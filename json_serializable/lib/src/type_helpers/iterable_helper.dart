@@ -15,6 +15,8 @@ class IterableHelper extends TypeHelper {
       return null;
     }
 
+    var iterableGenericType = _getIterableGenericType(targetType);
+
     // This block will yield a regular list, which works fine for JSON
     // Although it's possible that child elements may be marked unsafe
 
@@ -30,7 +32,7 @@ class IterableHelper extends TypeHelper {
     if (subFieldValue != _closureArg) {
       // TODO: the type could be imported from a library with a prefix!
       expression =
-          '${expression}${optionalQuestion}.map(($_closureArg) => $subFieldValue)';
+          '${expression}${optionalQuestion}.map((${iterableGenericType.toString()}  $_closureArg) => $subFieldValue)';
 
       // expression now represents an Iterable (even if it started as a List
       // ...resetting `isList` to `false`.
@@ -65,7 +67,7 @@ class IterableHelper extends TypeHelper {
     var optionalQuestion = nullable ? '?' : '';
 
     var output =
-        '($expression as List)${optionalQuestion}.map(($_closureArg) => $itemSubVal)';
+        '($expression as List)${optionalQuestion}.map((${iterableGenericType.toString()} $_closureArg) => $itemSubVal)';
 
     if (_coreListChecker.isAssignableFromType(targetType)) {
       output += '${optionalQuestion}.toList()';

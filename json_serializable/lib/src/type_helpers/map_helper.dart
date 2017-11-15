@@ -31,7 +31,7 @@ class MapHelper extends TypeHelper {
 
     var result = 'new Map<String, dynamic>.fromIterables('
         '$expression.keys,'
-        '$expression.values.map(($_closureArg) => $subFieldValue))';
+        '$expression.values.map<dynamic>((${valueType.toString()} $_closureArg) => $subFieldValue))';
 
     return commonNullPrefix(nullable, expression, result);
   }
@@ -73,7 +73,7 @@ class MapHelper extends TypeHelper {
 
     var result = 'new Map<String, $valueArg>.fromIterables('
         '($expression as Map<String, dynamic>).keys,'
-        '($expression as Map).values.map(($_closureArg) => $itemSubVal))';
+        '($expression as Map).values.map((${valueArg.toString()} $_closureArg) => $itemSubVal))';
 
     return commonNullPrefix(nullable, expression, result);
   }
