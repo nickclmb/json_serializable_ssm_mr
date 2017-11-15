@@ -19,14 +19,12 @@ import 'package:cli_util/cli_util.dart' as cli;
 import 'package:path/path.dart' as p;
 
 /// [foundFiles] is the list of files to consider for the context.
-Future<AnalysisContext> getAnalysisContextForProjectPath(
-    String projectPath, List<String> foundFiles) async {
+Future<AnalysisContext> getAnalysisContextForProjectPath(String projectPath, List<String> foundFiles) async {
   // TODO: fail more clearly if this...fails
   var sdkPath = cli.getSdkPath();
 
   var resourceProvider = PhysicalResourceProvider.INSTANCE;
-  var sdk = new FolderBasedDartSdk(
-      resourceProvider, resourceProvider.getFolder(sdkPath));
+  var sdk = new FolderBasedDartSdk(resourceProvider, resourceProvider.getFolder(sdkPath));
 
   var packageResolver = _getPackageResolver(projectPath, sdk);
 
@@ -58,21 +56,18 @@ UriResolver _getPackageResolver(String projectPath, FolderBasedDartSdk sdk) {
         'expectetd location. $dotPackagesPath');
   }
 
-  var pubPackageMapProvider =
-      new PubPackageMapProvider(PhysicalResourceProvider.INSTANCE, sdk);
-  var packageMapInfo = pubPackageMapProvider.computePackageMap(
-      PhysicalResourceProvider.INSTANCE.getResource(projectPath) as Folder);
+  var pubPackageMapProvider = new PubPackageMapProvider(PhysicalResourceProvider.INSTANCE, sdk);
+  var packageMapInfo =
+      pubPackageMapProvider.computePackageMap(PhysicalResourceProvider.INSTANCE.getResource(projectPath) as Folder);
   var packageMap = packageMapInfo.packageMap;
   if (packageMap == null) {
     throw new StateError('An error occurred getting the package map.');
   }
 
-  return new PackageMapUriResolver(
-      PhysicalResourceProvider.INSTANCE, packageMap);
+  return new PackageMapUriResolver(PhysicalResourceProvider.INSTANCE, packageMap);
 }
 
-LibraryElement getLibraryElementForSourceFile(
-    AnalysisContext context, String sourcePath) {
+LibraryElement getLibraryElementForSourceFile(AnalysisContext context, String sourcePath) {
   Source source = new FileBasedSource(new JavaFile(sourcePath));
 
   var libs = context.getLibrariesContaining(source);
@@ -94,11 +89,8 @@ LibraryElement getLibraryElementForSourceFile(
 
 // may return `null` if [path] doesn't refer to a library.
 /// [dartFiles] is a [Stream] of paths to [.dart] files.
-Iterable<LibraryElement> _getLibraryElements(
-        List<String> dartFiles, AnalysisContext context) =>
-    dartFiles
-        .map((path) => _getLibraryElement(path, context))
-        .where((lib) => lib != null);
+Iterable<LibraryElement> _getLibraryElements(List<String> dartFiles, AnalysisContext context) =>
+    dartFiles.map((path) => _getLibraryElement(path, context)).where((lib) => lib != null);
 
 LibraryElement _getLibraryElement(String path, AnalysisContext context) {
   Source source = new FileBasedSource(new JavaFile(path));

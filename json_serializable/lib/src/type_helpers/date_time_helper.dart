@@ -29,10 +29,8 @@ class DateTimeHelper extends TypeHelper {
       return null;
     }
 
-    return commonNullPrefix(
-        nullable, expression, 'DateTime.parse($expression as String)');
+    return commonNullPrefix(nullable, expression, 'DateTime.parse($expression as String)');
   }
 }
 
-bool _matchesType(DartType type) =>
-    const TypeChecker.fromUrl('dart:core#DateTime').isExactlyType(type);
+bool _matchesType(DartType type) => const TypeChecker.fromUrl('dart:core#DateTime').isExactlyType(type);

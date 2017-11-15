@@ -18,19 +18,16 @@ void main() {
     });
 
     test('empty', () {
-      roundTripPerson(new Person('', '', null,
-          middleName: '',
-          dateOfBirth: new DateTime.fromMillisecondsSinceEpoch(0)));
+      roundTripPerson(
+          new Person('', '', null, middleName: '', dateOfBirth: new DateTime.fromMillisecondsSinceEpoch(0)));
     });
 
     test('now', () {
-      roundTripPerson(new Person('a', 'b', House.gryffindor,
-          middleName: 'c', dateOfBirth: new DateTime.now()));
+      roundTripPerson(new Person('a', 'b', House.gryffindor, middleName: 'c', dateOfBirth: new DateTime.now()));
     });
 
     test('now toUtc', () {
-      roundTripPerson(new Person('a', 'b', House.hufflepuff,
-          middleName: 'c', dateOfBirth: new DateTime.now().toUtc()));
+      roundTripPerson(new Person('a', 'b', House.hufflepuff, middleName: 'c', dateOfBirth: new DateTime.now().toUtc()));
     });
 
     test('empty json', () {
@@ -83,11 +80,7 @@ void main() {
     test('platform', () {
       var order = new Order(Category.charmed)
         ..platform = Platform.undefined
-        ..altPlatforms = {
-          'u': Platform.undefined,
-          'f': Platform.foo,
-          'null': null
-        };
+        ..altPlatforms = {'u': Platform.undefined, 'f': Platform.foo, 'null': null};
 
       roundTripOrder(order);
     });
@@ -103,8 +96,7 @@ void main() {
       expect(item.saleDates, isNull);
       roundTripItem(item);
 
-      expect(item.toJson().keys, orderedEquals(['price', 'saleDates', 'rates']),
-          reason: 'Omits null `itemNumber`');
+      expect(item.toJson().keys, orderedEquals(['price', 'saleDates', 'rates']), reason: 'Omits null `itemNumber`');
     });
 
     test('set itemNumber - with custom JSON key', () {
@@ -112,8 +104,7 @@ void main() {
       expect(item.itemNumber, 42);
       roundTripItem(item);
 
-      expect(item.toJson().keys,
-          orderedEquals(['price', 'item-number', 'saleDates', 'rates']),
+      expect(item.toJson().keys, orderedEquals(['price', 'item-number', 'saleDates', 'rates']),
           reason: 'Includes non-null `itemNumber` - with custom key');
     });
   });
@@ -145,8 +136,7 @@ void main() {
         'ints': [0.0, 0],
       };
 
-      expect(() => new Numbers.fromJson(value),
-          throwsA(new isInstanceOf<CastError>()));
+      expect(() => new Numbers.fromJson(value), throwsA(new isInstanceOf<CastError>()));
     });
   });
 }

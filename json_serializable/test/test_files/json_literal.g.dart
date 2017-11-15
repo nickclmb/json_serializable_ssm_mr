@@ -28,14 +28,7 @@ final _$dataJsonLiteral = <dynamic>[
   5.5351,
   -5.5,
   <String, dynamic>{},
-  <String, dynamic>{
-    'null': null,
-    'int': 42,
-    'double': 42.0,
-    'string': 'string',
-    'list': <dynamic>[],
-    'bool': true
-  }
+  <String, dynamic>{'null': null, 'int': 42, 'double': 42.0, 'string': 'string', 'list': <dynamic>[], 'bool': true}
 ];
 const _$asConstJsonLiteral = const <dynamic>[
   'simple string',

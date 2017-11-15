@@ -15,8 +15,7 @@ List<DartType> typeArgumentsOf(DartType type, TypeChecker checker) {
   return implementation?.typeArguments;
 }
 
-typedef String TypeHelperGenerator(
-    DartType fieldType, String expression, bool nullable);
+typedef String TypeHelperGenerator(DartType fieldType, String expression, bool nullable);
 
 abstract class TypeHelper {
   const TypeHelper();
@@ -37,8 +36,7 @@ abstract class TypeHelper {
   ///   "$expression.id";
   /// ```.
   // TODO(kevmoo) – document `serializeNested`
-  String serialize(DartType targetType, String expression, bool nullable,
-      TypeHelperGenerator serializeNested);
+  String serialize(DartType targetType, String expression, bool nullable, TypeHelperGenerator serializeNested);
 
   /// Returns Dart code that deserializes an [expression] representing a JSON
   /// literal to into [targetType].
@@ -64,8 +62,7 @@ abstract class TypeHelper {
   ///   "new ${targetType.name}.fromInt($expression)";
   /// ```.
   // TODO(kevmoo) – document `deserializeNested`
-  String deserialize(DartType targetType, String expression, bool nullable,
-      TypeHelperGenerator deserializeNested);
+  String deserialize(DartType targetType, String expression, bool nullable, TypeHelperGenerator deserializeNested);
 }
 
 /// A [TypeChecker] for [String], [bool] and [num].

@@ -16,16 +16,13 @@ class JsonLiteralGenerator extends GeneratorForAnnotation<JsonLiteral> {
   const JsonLiteralGenerator();
 
   @override
-  Future<String> generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) async {
+  Future<String> generateForAnnotatedElement(Element element, ConstantReader annotation, BuildStep buildStep) async {
     if (p.isAbsolute(annotation.read('path').stringValue)) {
-      throw new ArgumentError(
-          '`annotation.path` must be relative path to the source file.');
+      throw new ArgumentError('`annotation.path` must be relative path to the source file.');
     }
 
     var sourcePathDir = p.dirname(buildStep.inputId.path);
-    var fileId = new AssetId(buildStep.inputId.package,
-        p.join(sourcePathDir, annotation.read('path').stringValue));
+    var fileId = new AssetId(buildStep.inputId.package, p.join(sourcePathDir, annotation.read('path').stringValue));
     var content = JSON.decode(await buildStep.readAsString(fileId));
 
     var asConst = annotation.read('asConst').boolValue;
@@ -49,15 +46,13 @@ String _jsonLiteralAsDart(dynamic value, bool asConst) {
   if (value is bool || value is num) return value.toString();
 
   if (value is List) {
-    var listItems =
-        value.map((v) => _jsonLiteralAsDart(v, asConst)).join(',\n');
+    var listItems = value.map((v) => _jsonLiteralAsDart(v, asConst)).join(',\n');
     return '${asConst ? 'const' : ''}<dynamic>[$listItems]';
   }
 
   if (value is Map<String, dynamic>) return _jsonMapAsDart(value, asConst);
 
-  throw new StateError(
-      'Should never get here – with ${value.runtimeType} - `$value`.');
+  throw new StateError('Should never get here – with ${value.runtimeType} - `$value`.');
 }
 
 String _jsonMapAsDart(Map<String, dynamic> value, bool asConst) {
@@ -93,10 +88,7 @@ String _jsonStringAsDart(String value) {
       // `value` contains both single and double quotes as well as `$`.
       // The only safe way to wrap the content is to escape all of the
       // problematic characters.
-      var string = value
-          .replaceAll('\$', '\\\$')
-          .replaceAll('"', '\\"')
-          .replaceAll("'", "\\'");
+      var string = value.replaceAll('\$', '\\\$').replaceAll('"', '\\"').replaceAll("'", "\\'");
       return "'$string'";
     } else if (contains$) {
       // `value` contains "'" and "$", but not '"'.

@@ -45,5 +45,4 @@ bool sinkEquals(KitchenSink a, Object other) =>
     _deepEquals(a.stringDateTimeMap, other.stringDateTimeMap) &&
     _deepEquals(a.crazyComplex, other.crazyComplex);
 
-bool _deepEquals(Object a, Object b) =>
-    const DeepCollectionEquality().equals(a, b);
+bool _deepEquals(Object a, Object b) => const DeepCollectionEquality().equals(a, b);

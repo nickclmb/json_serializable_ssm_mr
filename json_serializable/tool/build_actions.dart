@@ -16,14 +16,9 @@ final List<BuildAction> buildActions = [
       new LibraryBuilder(new _NonNullableGenerator(),
           generatedExtension: '.non_nullable.dart', header: _copyrightHeader),
       'json_serializable',
-      inputs: const [
-        'test/test_files/kitchen_sink.dart',
-        'test/test_files/json_test_example.dart'
-      ]),
+      inputs: const ['test/test_files/kitchen_sink.dart', 'test/test_files/json_test_example.dart']),
   new BuildAction(
-    new PartBuilder(
-        const [const JsonSerializableGenerator(), const JsonLiteralGenerator()],
-        header: _copyrightHeader),
+    new PartBuilder(const [const JsonSerializableGenerator(), const JsonLiteralGenerator()], header: _copyrightHeader),
     'json_serializable',
     inputs: const [
       'example/*.dart',
@@ -36,8 +31,7 @@ final List<BuildAction> buildActions = [
   )
 ];
 
-final _copyrightContent =
-    '''// Copyright (c) 2017, the Dart project authors. Please see the AUTHORS file
+final _copyrightContent = '''// Copyright (c) 2017, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 ''';
@@ -59,18 +53,14 @@ class _NonNullableGenerator extends Generator {
         "part '${baseName}.g.dart",
         "part '${baseName}.non_nullable.g.dart",
       ),
-      new _Replacement(
-          '@JsonSerializable()', '@JsonSerializable(nullable: false)'),
+      new _Replacement('@JsonSerializable()', '@JsonSerializable(nullable: false)'),
     ];
 
     if (baseName == 'kitchen_sink') {
       replacements.addAll([
-        new _Replacement('List<T> _defaultList<T>() => null;',
-            'List<T> _defaultList<T>() => <T>[];'),
-        new _Replacement(
-            'Map _defaultMap() => null;', 'Map _defaultMap() => {};'),
-        new _Replacement('DateTime dateTime;',
-            'DateTime dateTime = new DateTime(1981, 6, 5);')
+        new _Replacement('List<T> _defaultList<T>() => null;', 'List<T> _defaultList<T>() => <T>[];'),
+        new _Replacement('Map _defaultMap() => null;', 'Map _defaultMap() => {};'),
+        new _Replacement('DateTime dateTime;', 'DateTime dateTime = new DateTime(1981, 6, 5);')
       ]);
     }
 
@@ -84,14 +74,12 @@ class _Replacement {
 
   _Replacement(this.existing, this.replacement);
 
-  static String generate(
-      String inputContent, Iterable<_Replacement> replacements) {
+  static String generate(String inputContent, Iterable<_Replacement> replacements) {
     var outputContent = inputContent;
 
     for (var r in replacements) {
       if (!outputContent.contains(r.existing)) {
-        throw new StateError(
-            'Input string did not contain `${r.existing}` as expected.');
+        throw new StateError('Input string did not contain `${r.existing}` as expected.');
       }
       outputContent = outputContent.replaceAll(r.existing, r.replacement);
     }

@@ -30,8 +30,7 @@ class JsonHelper extends TypeHelper {
     }
 
     var classElement = targetType.element as ClassElement;
-    var fromJsonCtor =
-        classElement.constructors.firstWhere((ce) => ce.name == 'fromJson');
+    var fromJsonCtor = classElement.constructors.firstWhere((ce) => ce.name == 'fromJson');
     // TODO: should verify that this type is a valid JSON type...but for now...
     var asCastType = fromJsonCtor.parameters.single.type;
 

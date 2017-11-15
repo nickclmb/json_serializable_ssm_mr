@@ -21,8 +21,7 @@ class Person extends Object with _$PersonSerializerMixin {
   @JsonKey(name: '\$house')
   final House house;
 
-  Person(this.firstName, this.lastName, this.house,
-      {this.middleName, this.dateOfBirth});
+  Person(this.firstName, this.lastName, this.house, {this.middleName, this.dateOfBirth});
 
   factory Person.fromJson(Map<String, dynamic> json) => _$PersonFromJson(json);
 
@@ -51,8 +50,7 @@ class Order extends Object with _$OrderSerializerMixin {
   int get price => items.fold(0, (total, item) => item.price + total);
 
   Order(this.category, [Iterable<Item> items])
-      : this.items = new UnmodifiableListView<Item>(
-            new List<Item>.unmodifiable(items ?? const <Item>[]));
+      : this.items = new UnmodifiableListView<Item>(new List<Item>.unmodifiable(items ?? const <Item>[]));
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
@@ -117,8 +115,7 @@ class Numbers extends Object with _$NumbersSerializerMixin {
 
   Numbers();
 
-  factory Numbers.fromJson(Map<String, dynamic> json) =>
-      _$NumbersFromJson(json);
+  factory Numbers.fromJson(Map<String, dynamic> json) => _$NumbersFromJson(json);
 
   bool operator ==(Object other) =>
       other is Numbers &&

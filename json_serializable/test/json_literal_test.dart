@@ -9,8 +9,7 @@ import 'test_utils.dart';
 
 main() {
   test('literal round-trip', () {
-    var dataFilePath =
-        p.join(getPackagePath(), 'test', 'test_files', 'data.json');
+    var dataFilePath = p.join(getPackagePath(), 'test', 'test_files', 'data.json');
     var dataFile = new File(dataFilePath);
 
     var dataString = loudEncode(JSON.decode(dataFile.readAsStringSync()));

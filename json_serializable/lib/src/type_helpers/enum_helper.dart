@@ -6,19 +6,16 @@ class EnumHelper extends TypeHelper {
   const EnumHelper();
 
   @override
-  String serialize(DartType targetType, String expression, bool nullable,
-      TypeHelperGenerator serializeNested) {
+  String serialize(DartType targetType, String expression, bool nullable, TypeHelperGenerator serializeNested) {
     if (targetType is InterfaceType && targetType.element.isEnum) {
-      return commonNullPrefix(
-          nullable, expression, "$expression.toString().split('.')[1]");
+      return commonNullPrefix(nullable, expression, "$expression.toString().split('.')[1]");
     }
 
     return null;
   }
 
   @override
-  String deserialize(DartType targetType, String expression, bool nullable,
-      TypeHelperGenerator deserializeNested) {
+  String deserialize(DartType targetType, String expression, bool nullable, TypeHelperGenerator deserializeNested) {
     if (targetType is InterfaceType && targetType.element.isEnum) {
       return commonNullPrefix(
           nullable,
