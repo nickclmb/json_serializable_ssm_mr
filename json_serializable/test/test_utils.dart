@@ -17,23 +17,31 @@ String _packagePathCache;
 String getPackagePath() {
   if (_packagePathCache == null) {
     // Getting the location of this file – via reflection
-    var currentFilePath = (reflect(getPackagePath) as ClosureMirror).function.location.sourceUri.path;
+    var currentFilePath = (reflect(getPackagePath) as ClosureMirror)
+        .function
+        .location
+        .sourceUri
+        .path;
 
     _packagePathCache = p.normalize(p.join(p.dirname(currentFilePath), '..'));
   }
   return _packagePathCache;
 }
 
-Matcher throwsInvalidGenerationSourceError(messageMatcher, todoMatcher) => throwsA(allOf(
-    new isInstanceOf<InvalidGenerationSourceError>(),
-    new FeatureMatcher<InvalidGenerationSourceError>('message', (e) => e.message, messageMatcher),
-    new FeatureMatcher<InvalidGenerationSourceError>('todo', (e) => e.todo, todoMatcher)));
+Matcher throwsInvalidGenerationSourceError(messageMatcher, todoMatcher) =>
+    throwsA(allOf(
+        new isInstanceOf<InvalidGenerationSourceError>(),
+        new FeatureMatcher<InvalidGenerationSourceError>(
+            'message', (e) => e.message, messageMatcher),
+        new FeatureMatcher<InvalidGenerationSourceError>(
+            'todo', (e) => e.todo, todoMatcher)));
 
 // TODO(kevmoo) add this to pkg/matcher – is nice!
 class FeatureMatcher<T> extends CustomMatcher {
   final dynamic Function(T value) _feature;
 
-  FeatureMatcher(String name, this._feature, matcher) : super('`$name`', '`$name`', matcher);
+  FeatureMatcher(String name, this._feature, matcher)
+      : super('`$name`', '`$name`', matcher);
 
   @override
   featureValueOf(covariant T actual) => _feature(actual);
@@ -52,7 +60,8 @@ Iterable<Element> getElementsFromLibraryElement(LibraryElement unit) sync* {
 
 Iterable<Element> _getElements(CompilationUnitMember member) {
   if (member is TopLevelVariableDeclaration) {
-    return member.variables.variables.map(resolutionMap.elementDeclaredByVariableDeclaration);
+    return member.variables.variables
+        .map(resolutionMap.elementDeclaredByVariableDeclaration);
   }
   var element = resolutionMap.elementDeclaredByDeclaration(member);
 

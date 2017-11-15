@@ -29,7 +29,8 @@ void main() {
 
     // 2 - run build - should be no output, since nothing should change
     var result = _runProc('dart', ['--checked', 'tool/build.dart']);
-    expect(result, contains(new RegExp(r'Build: Succeeded after \S+ with \d+ outputs')));
+    expect(result,
+        contains(new RegExp(r'Build: Succeeded after \S+ with \d+ outputs')));
 
     // 3 - get a list of modified `.g.dart` files - should still be empty
     expect(_changedGeneratedFiles(), isEmpty);
@@ -52,7 +53,8 @@ String _runProc(String proc, List<String> args) {
   var result = Process.runSync(proc, args);
 
   if (result.exitCode != 0) {
-    throw new ProcessException(proc, args, result.stderr as String, result.exitCode);
+    throw new ProcessException(
+        proc, args, result.stderr as String, result.exitCode);
   }
 
   return (result.stdout as String).trim();

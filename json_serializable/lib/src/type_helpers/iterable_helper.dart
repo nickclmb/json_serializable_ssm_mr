@@ -9,7 +9,8 @@ class IterableHelper extends TypeHelper {
   const IterableHelper();
 
   @override
-  String serialize(DartType targetType, String expression, bool nullable, TypeHelperGenerator serializeNested) {
+  String serialize(DartType targetType, String expression, bool nullable,
+      TypeHelperGenerator serializeNested) {
     if (!_coreIterableChecker.isAssignableFromType(targetType)) {
       return null;
     }
@@ -20,7 +21,8 @@ class IterableHelper extends TypeHelper {
     // Although it's possible that child elements may be marked unsafe
 
     var isList = _coreListChecker.isAssignableFromType(targetType);
-    var subFieldValue = serializeNested(_getIterableGenericType(targetType), _closureArg, nullable);
+    var subFieldValue = serializeNested(
+        _getIterableGenericType(targetType), _closureArg, nullable);
 
     var optionalQuestion = nullable ? '?' : '';
 
@@ -46,14 +48,16 @@ class IterableHelper extends TypeHelper {
   }
 
   @override
-  String deserialize(DartType targetType, String expression, bool nullable, TypeHelperGenerator deserializeNested) {
+  String deserialize(DartType targetType, String expression, bool nullable,
+      TypeHelperGenerator deserializeNested) {
     if (!_coreIterableChecker.isAssignableFromType(targetType)) {
       return null;
     }
 
     var iterableGenericType = _getIterableGenericType(targetType);
 
-    var itemSubVal = deserializeNested(iterableGenericType, _closureArg, nullable);
+    var itemSubVal =
+        deserializeNested(iterableGenericType, _closureArg, nullable);
 
     // If `itemSubVal` is the same, then we don't need to do anything fancy
     if (_closureArg == itemSubVal) {
@@ -62,7 +66,8 @@ class IterableHelper extends TypeHelper {
 
     var optionalQuestion = nullable ? '?' : '';
 
-    var output = '($expression as List)${optionalQuestion}.map((dynamic $_closureArg) => $itemSubVal)';
+    var output =
+        '($expression as List)${optionalQuestion}.map((dynamic $_closureArg) => $itemSubVal)';
 
     if (_coreListChecker.isAssignableFromType(targetType)) {
       output += '${optionalQuestion}.toList()';
@@ -72,7 +77,8 @@ class IterableHelper extends TypeHelper {
   }
 }
 
-DartType _getIterableGenericType(DartType type) => typeArgumentsOf(type, _coreIterableChecker).single;
+DartType _getIterableGenericType(DartType type) =>
+    typeArgumentsOf(type, _coreIterableChecker).single;
 
 final _coreIterableChecker = const TypeChecker.fromUrl('dart:core#Iterable');
 

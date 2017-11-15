@@ -23,7 +23,10 @@ class JsonSerializable {
 
   // TODO(kevmoo): document the constructor
   const JsonSerializable(
-      {bool createFactory: true, bool createToJson: true, bool includeIfNull: true, bool nullable: true})
+      {bool createFactory: true,
+      bool createToJson: true,
+      bool includeIfNull: true,
+      bool nullable: true})
       : this.createFactory = createFactory ?? true,
         this.createToJson = createToJson ?? true,
         this.includeIfNull = includeIfNull ?? true,

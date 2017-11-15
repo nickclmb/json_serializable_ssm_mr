@@ -20,7 +20,8 @@ void main() {
     test('Fields with `!includeIfNull` should not be included when null', () {
       var item = new nullable.KitchenSink();
 
-      var expectedDefaultKeys = _expectedOrder.toSet()..removeAll(_excludeIfNullKeys);
+      var expectedDefaultKeys = _expectedOrder.toSet()
+        ..removeAll(_excludeIfNullKeys);
 
       var encoded = item.toJson();
 
@@ -80,7 +81,8 @@ void main() {
 
   group('KitchenSink - non-nullable', () {
     test('with null values fails serialization', () {
-      expect(() => (new nn.KitchenSink()..stringDateTimeMap = null).toJson(), throwsNoSuchMethodError);
+      expect(() => (new nn.KitchenSink()..stringDateTimeMap = null).toJson(),
+          throwsNoSuchMethodError);
     });
 
     test('with empty json fails deserialization', () {
@@ -111,7 +113,8 @@ typedef KitchenSink KitchenSinkCtor(
     Iterable<int> intIterable,
     Iterable<DateTime> dateTimeIterable});
 
-void _sharedTests(KitchenSinkCtor ctor, KitchenSink fromJson(Map<String, dynamic> json)) {
+void _sharedTests(
+    KitchenSinkCtor ctor, KitchenSink fromJson(Map<String, dynamic> json)) {
   roundTripSink(KitchenSink p) {
     roundTripObject(p, fromJson);
   }
@@ -162,7 +165,13 @@ void _sharedTests(KitchenSinkCtor ctor, KitchenSink fromJson(Map<String, dynamic
   });
 }
 
-final _excludeIfNullKeys = ['dateTime', 'iterable', 'dateTimeList', 'crazyComplex', toJsonMapVarName];
+final _excludeIfNullKeys = [
+  'dateTime',
+  'iterable',
+  'dateTimeList',
+  'crazyComplex',
+  toJsonMapVarName
+];
 
 final _expectedOrder = [
   'dateTime',

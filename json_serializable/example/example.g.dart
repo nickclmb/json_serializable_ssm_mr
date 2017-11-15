@@ -10,11 +10,17 @@ part of json_serializable.example;
 // Generator: JsonSerializableGenerator
 // **************************************************************************
 
-Person _$PersonFromJson(Map<String, dynamic> json) =>
-    new Person(json['firstName'] as String, json['lastName'] as String, DateTime.parse(json['date-of-birth'] as String),
-        middleName: json['middleName'] as String,
-        lastOrder: json['last-order'] == null ? null : DateTime.parse(json['last-order'] as String),
-        orders: (json['orders'] as List).map((dynamic e) => new Order.fromJson(e as Map<String, dynamic>)).toList());
+Person _$PersonFromJson(Map<String, dynamic> json) => new Person(
+    json['firstName'] as String,
+    json['lastName'] as String,
+    DateTime.parse(json['date-of-birth'] as String),
+    middleName: json['middleName'] as String,
+    lastOrder: json['last-order'] == null
+        ? null
+        : DateTime.parse(json['last-order'] as String),
+    orders: (json['orders'] as List)
+        .map((dynamic e) => new Order.fromJson(e as Map<String, dynamic>))
+        .toList());
 
 abstract class _$PersonSerializerMixin {
   String get firstName;
@@ -47,7 +53,9 @@ Order _$OrderFromJson(Map<String, dynamic> json) => new Order()
   ..count = json['count'] as int
   ..itemNumber = json['itemNumber'] as int
   ..isRushed = json['isRushed'] as bool
-  ..item = json['item'] == null ? null : new Item.fromJson(json['item'] as Map<String, dynamic>);
+  ..item = json['item'] == null
+      ? null
+      : new Item.fromJson(json['item'] as Map<String, dynamic>);
 
 abstract class _$OrderSerializerMixin {
   int get count;
@@ -93,7 +101,8 @@ final _$glossaryDataJsonLiteral = <String, dynamic>{
           'Acronym': 'SGML',
           'Abbrev': 'ISO 8879:1986',
           'GlossDef': <String, dynamic>{
-            'para': 'A meta-markup language, used to create markup languages such as DocBook.',
+            'para':
+                'A meta-markup language, used to create markup languages such as DocBook.',
             'GlossSeeAlso': <dynamic>['GML', 'XML']
           },
           'GlossSee': 'markup'

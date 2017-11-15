@@ -20,7 +20,8 @@ import 'type_helpers/map_helper.dart';
 import 'type_helpers/value_helper.dart';
 import 'utils.dart';
 
-class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable> {
+class JsonSerializableGenerator
+    extends GeneratorForAnnotation<JsonSerializable> {
   static const _coreHelpers = const [
     const IterableHelper(),
     const MapHelper(),
@@ -39,21 +40,26 @@ class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable>
   ///
   /// If [typeHelpers] is not provided, two built-in helpers are used:
   /// [JsonHelper] and [DateTimeHelper].
-  const JsonSerializableGenerator({List<TypeHelper> typeHelpers}) : this._typeHelpers = typeHelpers ?? _defaultHelpers;
+  const JsonSerializableGenerator({List<TypeHelper> typeHelpers})
+      : this._typeHelpers = typeHelpers ?? _defaultHelpers;
 
   /// Creates an instance of [JsonSerializableGenerator].
   ///
   /// [typeHelpers] provides a set of [TypeHelper] that will be used along with
   /// the built-in helpers: [JsonHelper] and [DateTimeHelper].
-  factory JsonSerializableGenerator.withDefaultHelpers(Iterable<TypeHelper> typeHelpers) =>
+  factory JsonSerializableGenerator.withDefaultHelpers(
+          Iterable<TypeHelper> typeHelpers) =>
       new JsonSerializableGenerator(
-          typeHelpers: new List.unmodifiable([typeHelpers, _defaultHelpers].expand((e) => e)));
+          typeHelpers: new List.unmodifiable(
+              [typeHelpers, _defaultHelpers].expand((e) => e)));
 
   @override
-  Future<String> generateForAnnotatedElement(Element element, ConstantReader annotation, _) async {
+  Future<String> generateForAnnotatedElement(
+      Element element, ConstantReader annotation, _) async {
     if (element is! ClassElement) {
       var friendlyName = friendlyNameForElement(element);
-      throw new InvalidGenerationSourceError('Generator cannot target `$friendlyName`.',
+      throw new InvalidGenerationSourceError(
+          'Generator cannot target `$friendlyName`.',
           todo: 'Remove the JsonSerializable annotation from `$friendlyName`.');
     }
 
@@ -64,11 +70,14 @@ class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable>
     // TODO: support overriding the field set with an annotation option
     var fieldsList = classElement.fields.where((e) => !e.isStatic).toList();
 
-    var undefinedFields = fieldsList.where((fe) => fe.type.isUndefined).toList();
+    var undefinedFields =
+        fieldsList.where((fe) => fe.type.isUndefined).toList();
     if (undefinedFields.isNotEmpty) {
-      var description = undefinedFields.map((fe) => '`${fe.displayName}`').join(', ');
+      var description =
+          undefinedFields.map((fe) => '`${fe.displayName}`').join(', ');
 
-      throw new InvalidGenerationSourceError('At least one field has an invalid type: $description.',
+      throw new InvalidGenerationSourceError(
+          'At least one field has an invalid type: $description.',
           todo: 'Check names and imports.');
     }
 
@@ -77,7 +86,9 @@ class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable>
     fieldsList.sort((a, b) => _offsetFor(a).compareTo(_offsetFor(b)));
 
     // Explicitly using `LinkedHashMap` – we want these ordered.
-    var fields = new LinkedHashMap<String, FieldElement>.fromIterable(fieldsList, key: (f) => (f as FieldElement).name);
+    var fields = new LinkedHashMap<String, FieldElement>.fromIterable(
+        fieldsList,
+        key: (f) => (f as FieldElement).name);
 
     // Get the constructor to use for the factory
 
@@ -88,7 +99,8 @@ class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable>
     final classAnnotation = _valueForAnnotation(annotation);
 
     if (classAnnotation.createFactory) {
-      var toSkip = _writeFactory(buffer, classElement, fields, prefix, classAnnotation.nullable);
+      var toSkip = _writeFactory(
+          buffer, classElement, fields, prefix, classAnnotation.nullable);
 
       // If there are fields that are final – that are not set via the generated
       // constructor, then don't output them when generating the `toJson` call.
@@ -104,7 +116,8 @@ class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable>
     fields.values.fold(new Set<String>(), (Set<String> set, fe) {
       var jsonKey = _jsonKeyFor(fe).name ?? fe.name;
       if (!set.add(jsonKey)) {
-        throw new InvalidGenerationSourceError('More than one field has the JSON key `$jsonKey`.',
+        throw new InvalidGenerationSourceError(
+            'More than one field has the JSON key `$jsonKey`.',
             todo: 'Check the `JsonKey` annotations on fields.');
       }
       return set;
@@ -127,7 +140,8 @@ class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable>
 
       buffer.writeln('  Map<String, dynamic> toJson() ');
 
-      var writeNaive = fieldsList.every((e) => _writeJsonValueNaive(e, classAnnotation));
+      var writeNaive =
+          fieldsList.every((e) => _writeJsonValueNaive(e, classAnnotation));
 
       if (writeNaive) {
         // write simple `toJson` method that includes all keys...
@@ -144,8 +158,8 @@ class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable>
     return buffer.toString();
   }
 
-  void _writeToJsonWithNullChecks(
-      StringBuffer buffer, Iterable<FieldElement> fields, JsonSerializable classAnnotation) {
+  void _writeToJsonWithNullChecks(StringBuffer buffer,
+      Iterable<FieldElement> fields, JsonSerializable classAnnotation) {
     buffer.writeln('{');
 
     buffer.writeln('var $toJsonMapVarName = <String, dynamic>{');
@@ -162,16 +176,19 @@ class JsonSerializableGenerator extends GeneratorForAnnotation<JsonSerializable>
 
       // If `fieldName` collides with one of the local helpers, prefix
       // access with `this.`.
-      if (safeFieldAccess == toJsonMapVarName || safeFieldAccess == toJsonMapHelperName) {
+      if (safeFieldAccess == toJsonMapVarName ||
+          safeFieldAccess == toJsonMapHelperName) {
         safeFieldAccess = 'this.$safeFieldAccess';
       }
 
-      var expression = _serializeField(field, classAnnotation.nullable, accessOverride: safeFieldAccess);
+      var expression = _serializeField(field, classAnnotation.nullable,
+          accessOverride: safeFieldAccess);
       if (_writeJsonValueNaive(field, classAnnotation)) {
         if (directWrite) {
           buffer.writeln('$safeJsonKeyString : $expression,');
         } else {
-          buffer.writeln('$toJsonMapVarName[$safeJsonKeyString] = $expression;');
+          buffer
+              .writeln('$toJsonMapVarName[$safeJsonKeyString] = $expression;');
         }
       } else {
         if (directWrite) {
@@ -189,7 +206,8 @@ void $toJsonMapHelperName(String key, dynamic value) {
 }''');
           directWrite = false;
         }
-        buffer.writeln('$toJsonMapHelperName($safeJsonKeyString, $expression);');
+        buffer
+            .writeln('$toJsonMapHelperName($safeJsonKeyString, $expression);');
       }
     }
 
@@ -198,12 +216,14 @@ void $toJsonMapHelperName(String key, dynamic value) {
     buffer.writeln('}');
   }
 
-  void _writeToJsonSimple(StringBuffer buffer, Iterable<FieldElement> fields, bool classSupportNullable) {
+  void _writeToJsonSimple(StringBuffer buffer, Iterable<FieldElement> fields,
+      bool classSupportNullable) {
     buffer.writeln('=> <String, dynamic>{');
 
     var pairs = <String>[];
     for (var field in fields) {
-      pairs.add('${_safeNameAccess(field)}: ${_serializeField(field, classSupportNullable )}');
+      pairs.add(
+          '${_safeNameAccess(field)}: ${_serializeField(field, classSupportNullable )}');
     }
     buffer.writeAll(pairs, ',\n');
 
@@ -211,8 +231,12 @@ void $toJsonMapHelperName(String key, dynamic value) {
   }
 
   /// Returns the set of fields that are not written to via constructors.
-  Set<FieldElement> _writeFactory(StringBuffer buffer, ClassElement classElement, Map<String, FieldElement> fields,
-      String prefix, bool classSupportNullable) {
+  Set<FieldElement> _writeFactory(
+      StringBuffer buffer,
+      ClassElement classElement,
+      Map<String, FieldElement> fields,
+      String prefix,
+      bool classSupportNullable) {
     // creating a copy so it can be mutated
     var fieldsToSet = new Map<String, FieldElement>.from(fields);
     var className = classElement.displayName;
@@ -222,7 +246,8 @@ void $toJsonMapHelperName(String key, dynamic value) {
     // TODO: allow overriding the ctor used for the factory
     var ctor = classElement.unnamedConstructor;
     if (ctor == null) {
-      throw new UnsupportedError('The class `${classElement.name}` has no default constructor.');
+      throw new UnsupportedError(
+          'The class `${classElement.name}` has no default constructor.');
     }
 
     var ctorArguments = <ParameterElement>[];
@@ -248,17 +273,22 @@ void $toJsonMapHelperName(String key, dynamic value) {
       fieldsToSet.remove(arg.name);
     }
 
-    var undefinedArgs =
-        [ctorArguments, ctorNamedArguments].expand((l) => l).where((pe) => pe.type.isUndefined).toList();
+    var undefinedArgs = [ctorArguments, ctorNamedArguments]
+        .expand((l) => l)
+        .where((pe) => pe.type.isUndefined)
+        .toList();
     if (undefinedArgs.isNotEmpty) {
-      var description = undefinedArgs.map((fe) => '`${fe.displayName}`').join(', ');
+      var description =
+          undefinedArgs.map((fe) => '`${fe.displayName}`').join(', ');
 
-      throw new InvalidGenerationSourceError('At least one constructor argument has an invalid type: $description.',
+      throw new InvalidGenerationSourceError(
+          'At least one constructor argument has an invalid type: $description.',
           todo: 'Check names and imports.');
     }
 
     // these are fields to skip – now to find them
-    var finalFields = fieldsToSet.values.where((field) => field.isFinal).toSet();
+    var finalFields =
+        fieldsToSet.values.where((field) => field.isFinal).toSet();
 
     for (var finalField in finalFields) {
       var value = fieldsToSet.remove(finalField.name);
@@ -269,11 +299,13 @@ void $toJsonMapHelperName(String key, dynamic value) {
     // Generate the static factory method
     //
     buffer.writeln();
-    buffer.writeln('$className ${prefix}FromJson(Map<String, dynamic> json) =>');
+    buffer
+        .writeln('$className ${prefix}FromJson(Map<String, dynamic> json) =>');
     buffer.write('    new $className(');
     buffer.writeAll(
-        ctorArguments.map((paramElement) =>
-            _deserializeForField(fields[paramElement.name], classSupportNullable, ctorParam: paramElement)),
+        ctorArguments.map((paramElement) => _deserializeForField(
+            fields[paramElement.name], classSupportNullable,
+            ctorParam: paramElement)),
         ', ');
     if (ctorArguments.isNotEmpty && ctorNamedArguments.isNotEmpty) {
       buffer.write(', ');
@@ -281,7 +313,9 @@ void $toJsonMapHelperName(String key, dynamic value) {
     buffer.writeAll(
         ctorNamedArguments.map((paramElement) =>
             '${paramElement.name}: ' +
-            _deserializeForField(fields[paramElement.name], classSupportNullable, ctorParam: paramElement)),
+            _deserializeForField(
+                fields[paramElement.name], classSupportNullable,
+                ctorParam: paramElement)),
         ', ');
 
     buffer.write(')');
@@ -300,12 +334,15 @@ void $toJsonMapHelperName(String key, dynamic value) {
     return finalFields;
   }
 
-  Iterable<TypeHelper> get _allHelpers => [_typeHelpers, _coreHelpers].expand((e) => e);
+  Iterable<TypeHelper> get _allHelpers =>
+      [_typeHelpers, _coreHelpers].expand((e) => e);
 
-  String _serializeField(FieldElement field, bool classIncludeNullable, {String accessOverride}) {
+  String _serializeField(FieldElement field, bool classIncludeNullable,
+      {String accessOverride}) {
     accessOverride ??= field.name;
     try {
-      return _serialize(field.type, accessOverride, _nullable(field, classIncludeNullable));
+      return _serialize(
+          field.type, accessOverride, _nullable(field, classIncludeNullable));
     } on UnsupportedTypeError catch (e) {
       throw _createInvalidGenerationError('toJson', field, e);
     }
@@ -314,25 +351,33 @@ void $toJsonMapHelperName(String key, dynamic value) {
   /// [expression] may be just the name of the field or it may an expression
   /// representing the serialization of a value.
   String _serialize(DartType targetType, String expression, bool nullable) =>
-      _allHelpers.map((h) => h.serialize(targetType, expression, nullable, _serialize)).firstWhere((r) => r != null,
-          orElse: () => throw new UnsupportedTypeError(targetType, expression, _notSupportedWithTypeHelpersMsg));
+      _allHelpers
+          .map((h) => h.serialize(targetType, expression, nullable, _serialize))
+          .firstWhere((r) => r != null,
+              orElse: () => throw new UnsupportedTypeError(
+                  targetType, expression, _notSupportedWithTypeHelpersMsg));
 
-  String _deserializeForField(FieldElement field, bool classSupportNullable, {ParameterElement ctorParam}) {
+  String _deserializeForField(FieldElement field, bool classSupportNullable,
+      {ParameterElement ctorParam}) {
     var jsonKey = _safeNameAccess(field);
 
     var targetType = ctorParam?.type ?? field.type;
 
     try {
-      return _deserialize(targetType, 'json[$jsonKey]', _nullable(field, classSupportNullable));
+      return _deserialize(
+          targetType, 'json[$jsonKey]', _nullable(field, classSupportNullable));
     } on UnsupportedTypeError catch (e) {
       throw _createInvalidGenerationError('fromJson', field, e);
     }
   }
 
-  String _deserialize(DartType targetType, String expression, bool nullable) => _allHelpers
-      .map((th) => th.deserialize(targetType, expression, nullable, _deserialize))
-      .firstWhere((r) => r != null,
-          orElse: () => throw new UnsupportedTypeError(targetType, expression, _notSupportedWithTypeHelpersMsg));
+  String _deserialize(DartType targetType, String expression, bool nullable) =>
+      _allHelpers
+          .map((th) =>
+              th.deserialize(targetType, expression, nullable, _deserialize))
+          .firstWhere((r) => r != null,
+              orElse: () => throw new UnsupportedTypeError(
+                  targetType, expression, _notSupportedWithTypeHelpersMsg));
 }
 
 String _safeNameAccess(FieldElement field) {
@@ -344,7 +389,8 @@ String _safeNameAccess(FieldElement field) {
 /// Returns `true` if the field should be treated as potentially nullable.
 ///
 /// If no [JsonKey] annotation is present on the field, `true` is returned.
-bool _nullable(FieldElement field, bool parentValue) => _jsonKeyFor(field).nullable ?? parentValue;
+bool _nullable(FieldElement field, bool parentValue) =>
+    _jsonKeyFor(field).nullable ?? parentValue;
 
 /// Returns `true` if the field can be written to JSON 'naively' – meaning
 /// we can avoid checking for `null`.
@@ -353,7 +399,8 @@ bool _nullable(FieldElement field, bool parentValue) => _jsonKeyFor(field).nulla
 ///   `includeIfNull` is `true`
 ///   or
 ///   `nullable` is `false`.
-bool _writeJsonValueNaive(FieldElement field, JsonSerializable parentAnnotation) =>
+bool _writeJsonValueNaive(
+        FieldElement field, JsonSerializable parentAnnotation) =>
     (_jsonKeyFor(field).includeIfNull ?? parentAnnotation.includeIfNull) ||
     !_nullable(field, parentAnnotation.nullable);
 
@@ -364,7 +411,8 @@ JsonKey _jsonKeyFor(FieldElement element) {
     // If an annotation exists on `element` the source is a 'real' field.
     // If the result is `null`, check the getter – it is a property.
     // TODO(kevmoo) setters: github.com/dart-lang/json_serializable/issues/24
-    var obj = _jsonKeyChecker.firstAnnotationOfExact(element) ?? _jsonKeyChecker.firstAnnotationOfExact(element.getter);
+    var obj = _jsonKeyChecker.firstAnnotationOfExact(element) ??
+        _jsonKeyChecker.firstAnnotationOfExact(element.getter);
 
     _jsonKeyExpando[element] = key = obj == null
         ? const JsonKey()
@@ -377,11 +425,12 @@ JsonKey _jsonKeyFor(FieldElement element) {
   return key;
 }
 
-JsonSerializable _valueForAnnotation(ConstantReader annotation) => new JsonSerializable(
-    createToJson: annotation.read('createToJson').boolValue,
-    createFactory: annotation.read('createFactory').boolValue,
-    nullable: annotation.read('nullable').boolValue,
-    includeIfNull: annotation.read('includeIfNull').boolValue);
+JsonSerializable _valueForAnnotation(ConstantReader annotation) =>
+    new JsonSerializable(
+        createToJson: annotation.read('createToJson').boolValue,
+        createFactory: annotation.read('createFactory').boolValue,
+        nullable: annotation.read('nullable').boolValue,
+        includeIfNull: annotation.read('includeIfNull').boolValue);
 
 final _jsonKeyExpando = new Expando<JsonKey>();
 
@@ -397,7 +446,8 @@ int _offsetFor(FieldElement e) {
   return e.nameOffset;
 }
 
-final _notSupportedWithTypeHelpersMsg = 'None of the provided `TypeHelper` instances support the defined type.';
+final _notSupportedWithTypeHelpersMsg =
+    'None of the provided `TypeHelper` instances support the defined type.';
 
 InvalidGenerationSourceError _createInvalidGenerationError(
     String targetMember, FieldElement field, UnsupportedTypeError e) {
@@ -406,5 +456,6 @@ InvalidGenerationSourceError _createInvalidGenerationError(
   var message = 'Could not generate `$targetMember` code for '
       '`${friendlyNameForElement(field)}`$extra.\n${e.reason}';
 
-  return new InvalidGenerationSourceError(message, todo: 'Make sure all of the types are serializable.');
+  return new InvalidGenerationSourceError(message,
+      todo: 'Make sure all of the types are serializable.');
 }

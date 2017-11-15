@@ -7,7 +7,9 @@ class ValueHelper extends TypeHelper {
 
   @override
   String serialize(DartType targetType, String expression, bool nullable, _) {
-    if (targetType.isDynamic || targetType.isObject || simpleJsonTypeChecker.isAssignableFromType(targetType)) {
+    if (targetType.isDynamic ||
+        targetType.isObject ||
+        simpleJsonTypeChecker.isAssignableFromType(targetType)) {
       return expression;
     }
 
@@ -19,7 +21,8 @@ class ValueHelper extends TypeHelper {
     if (targetType.isDynamic || targetType.isObject) {
       // just return it as-is. We'll hope it's safe.
       return expression;
-    } else if (const TypeChecker.fromRuntime(double).isExactlyType(targetType)) {
+    } else if (const TypeChecker.fromRuntime(double)
+        .isExactlyType(targetType)) {
       return '($expression as num)${nullable ? '?' : ''}.toDouble()';
     } else if (simpleJsonTypeChecker.isAssignableFromType(targetType)) {
       return '$expression as $targetType';

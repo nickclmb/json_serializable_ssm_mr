@@ -10,7 +10,8 @@ class MapHelper extends TypeHelper {
   const MapHelper();
 
   @override
-  String serialize(DartType targetType, String expression, bool nullable, TypeHelperGenerator serializeNested) {
+  String serialize(DartType targetType, String expression, bool nullable,
+      TypeHelperGenerator serializeNested) {
     if (!_coreMapChecker.isAssignableFromType(targetType)) {
       return null;
     }
@@ -36,7 +37,8 @@ class MapHelper extends TypeHelper {
   }
 
   @override
-  String deserialize(DartType targetType, String expression, bool nullable, TypeHelperGenerator deserializeNested) {
+  String deserialize(DartType targetType, String expression, bool nullable,
+      TypeHelperGenerator deserializeNested) {
     if (!_coreMapChecker.isAssignableFromType(targetType)) {
       return null;
     }
@@ -79,11 +81,13 @@ class MapHelper extends TypeHelper {
   void _checkSafeKeyType(String expression, DartType keyArg) {
     // We're not going to handle converting key types at the moment
     // So the only safe types for key are dynamic/Object/String
-    var safeKey = keyArg.isDynamic || keyArg.isObject || _stringTypeChecker.isExactlyType(keyArg);
+    var safeKey = keyArg.isDynamic ||
+        keyArg.isObject ||
+        _stringTypeChecker.isExactlyType(keyArg);
 
     if (!safeKey) {
-      throw new UnsupportedTypeError(
-          keyArg, expression, 'The type of the Map key must be `String`, `Object` or `dynamic`.');
+      throw new UnsupportedTypeError(keyArg, expression,
+          'The type of the Map key must be `String`, `Object` or `dynamic`.');
     }
   }
 }

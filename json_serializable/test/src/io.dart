@@ -15,8 +15,11 @@ bool pathToDartFile(String path) => p.extension(path) == '.dart';
 /// [searchList] is a list of relative paths within [directoryPath].
 /// Returned results will be those files that match file paths or are within
 /// directories defined in the list.
-Future<List<String>> getDartFiles(String directoryPath, {List<String> searchList, bool followLinks: false}) =>
-    getFiles(directoryPath, searchList: searchList, followLinks: followLinks).where(pathToDartFile).toList();
+Future<List<String>> getDartFiles(String directoryPath,
+        {List<String> searchList, bool followLinks: false}) =>
+    getFiles(directoryPath, searchList: searchList, followLinks: followLinks)
+        .where(pathToDartFile)
+        .toList();
 
 /// Skips symbolic links and any item in [directoryPath] recursively that begins
 /// with `.`.
@@ -24,7 +27,8 @@ Future<List<String>> getDartFiles(String directoryPath, {List<String> searchList
 /// [searchList] is a list of relative paths within [directoryPath].
 /// Returned results will be those files that match file paths or are within
 /// directories defined in the list.
-Stream<String> getFiles(String directoryPath, {List<String> searchList, bool followLinks: false}) async* {
+Stream<String> getFiles(String directoryPath,
+    {List<String> searchList, bool followLinks: false}) async* {
   if (searchList == null) {
     searchList = <String>[];
   }
@@ -49,7 +53,8 @@ Stream<String> getFiles(String directoryPath, {List<String> searchList, bool fol
   }
 }
 
-Future<Map<String, FileSystemEntityType>> _expandSearchList(String basePath, List<String> searchList) async {
+Future<Map<String, FileSystemEntityType>> _expandSearchList(
+    String basePath, List<String> searchList) async {
   List<String> searchPaths;
 
   if (searchList.isEmpty) {
@@ -63,7 +68,8 @@ Future<Map<String, FileSystemEntityType>> _expandSearchList(String basePath, Lis
   for (var path in searchPaths) {
     var type = await FileSystemEntity.type(path);
 
-    if (type != FileSystemEntityType.FILE && type != FileSystemEntityType.DIRECTORY) {
+    if (type != FileSystemEntityType.FILE &&
+        type != FileSystemEntityType.DIRECTORY) {
       continue;
     }
 
@@ -73,14 +79,16 @@ Future<Map<String, FileSystemEntityType>> _expandSearchList(String basePath, Lis
       // if a file or a directory, check to see if it's a child of ePath - dir
       if (eType == FileSystemEntityType.DIRECTORY) {
         if (p.isWithin(ePath, path)) {
-          throw new ArgumentError('Redundant entry: "$path" is within "$ePath"');
+          throw new ArgumentError(
+              'Redundant entry: "$path" is within "$ePath"');
         }
       }
 
       if (type == FileSystemEntityType.DIRECTORY) {
         // check to see if existing items are in this directory
         if (p.isWithin(path, ePath)) {
-          throw new ArgumentError('Redundant entry: "$ePath" is within "$path"');
+          throw new ArgumentError(
+              'Redundant entry: "$ePath" is within "$path"');
         }
       }
     });
@@ -91,8 +99,10 @@ Future<Map<String, FileSystemEntityType>> _expandSearchList(String basePath, Lis
   return items;
 }
 
-Stream<String> _populateFiles(Directory directory, {bool followLinks: false}) async* {
-  await for (var fse in directory.list(recursive: false, followLinks: followLinks)) {
+Stream<String> _populateFiles(Directory directory,
+    {bool followLinks: false}) async* {
+  await for (var fse
+      in directory.list(recursive: false, followLinks: followLinks)) {
     if (p.basename(fse.path).startsWith('.')) {
       continue;
     }

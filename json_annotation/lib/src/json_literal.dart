@@ -10,5 +10,6 @@ class JsonLiteral {
   /// `true` if the JSON literal should be written as a constant.
   final bool asConst;
 
-  const JsonLiteral(this.path, {bool asConst: false}) : this.asConst = asConst ?? false;
+  const JsonLiteral(this.path, {bool asConst: false})
+      : this.asConst = asConst ?? false;
 }

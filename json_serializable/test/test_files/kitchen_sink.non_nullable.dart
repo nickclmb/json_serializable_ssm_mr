@@ -21,7 +21,9 @@ List<T> _defaultList<T>() => <T>[];
 Map _defaultMap() => {};
 
 @JsonSerializable(nullable: false)
-class KitchenSink extends Object with _$KitchenSinkSerializerMixin implements k.KitchenSink {
+class KitchenSink extends Object
+    with _$KitchenSinkSerializerMixin
+    implements k.KitchenSink {
   // To ensure static members are not considered for serialization.
   static const answer = 42;
   static final reason = 42;
@@ -47,7 +49,8 @@ class KitchenSink extends Object with _$KitchenSinkSerializerMixin implements k.
         _intIterable = intIterable?.toList() ?? _defaultList(),
         _dateTimeIterable = dateTimeIterable?.toList() ?? _defaultList();
 
-  factory KitchenSink.fromJson(Map<String, Object> json) => _$KitchenSinkFromJson(json);
+  factory KitchenSink.fromJson(Map<String, Object> json) =>
+      _$KitchenSinkFromJson(json);
 
   @JsonKey(includeIfNull: false)
   DateTime dateTime = new DateTime(1981, 6, 5);
@@ -75,7 +78,8 @@ class KitchenSink extends Object with _$KitchenSinkSerializerMixin implements k.
   Map<String, DateTime> stringDateTimeMap = _defaultMap();
 
   @JsonKey(includeIfNull: false)
-  List<Map<String, Map<String, List<List<DateTime>>>>> crazyComplex = _defaultList();
+  List<Map<String, Map<String, List<List<DateTime>>>>> crazyComplex =
+      _defaultList();
 
   // Handle fields with names that collide with helper names
   @JsonKey(includeIfNull: false)
