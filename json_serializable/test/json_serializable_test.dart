@@ -31,14 +31,16 @@ void main() {
     test('const field', () async {
       expect(
           _runForElementNamed('theAnswer'),
-          throwsInvalidGenerationSourceError('Generator cannot target `const dynamic theAnswer`.',
+          throwsInvalidGenerationSourceError(
+              'Generator cannot target `const dynamic theAnswer`.',
               'Remove the JsonSerializable annotation from `const dynamic theAnswer`.'));
     });
 
     test('method', () async {
       expect(
           _runForElementNamed('annotatedMethod'),
-          throwsInvalidGenerationSourceError('Generator cannot target `annotatedMethod`.',
+          throwsInvalidGenerationSourceError(
+              'Generator cannot target `annotatedMethod`.',
               'Remove the JsonSerializable annotation from `annotatedMethod`.'));
     });
   });
@@ -47,31 +49,37 @@ void main() {
       expect(
           _runForElementNamed('UnknownCtorParamType'),
           throwsInvalidGenerationSourceError(
-              'At least one constructor argument has an invalid type: `number`.', 'Check names and imports.'));
+              'At least one constructor argument has an invalid type: `number`.',
+              'Check names and imports.'));
     });
 
     test('in fields', () async {
       expect(
           _runForElementNamed('UnknownFieldType'),
           throwsInvalidGenerationSourceError(
-              'At least one field has an invalid type: `number`.', 'Check names and imports.'));
+              'At least one field has an invalid type: `number`.',
+              'Check names and imports.'));
     });
   });
 
   group('unserializable types', () {
-    final noSupportHelperFyi = 'Could not generate `toJson` code for `Stopwatch watch`.\n'
+    final noSupportHelperFyi =
+        'Could not generate `toJson` code for `Stopwatch watch`.\n'
         'None of the provided `TypeHelper` instances support the defined type.';
 
     test('for toJson', () async {
-      expect(_runForElementNamed('NoSerializeFieldType'),
-          throwsInvalidGenerationSourceError(noSupportHelperFyi, 'Make sure all of the types are serializable.'));
+      expect(
+          _runForElementNamed('NoSerializeFieldType'),
+          throwsInvalidGenerationSourceError(noSupportHelperFyi,
+              'Make sure all of the types are serializable.'));
     });
 
     test('for fromJson', () async {
       expect(
           _runForElementNamed('NoDeserializeFieldType'),
           throwsInvalidGenerationSourceError(
-              noSupportHelperFyi.replaceFirst('toJson', 'fromJson'), 'Make sure all of the types are serializable.'));
+              noSupportHelperFyi.replaceFirst('toJson', 'fromJson'),
+              'Make sure all of the types are serializable.'));
     });
 
     final mapKeyFyi = 'Could not generate `toJson` code for '
@@ -79,15 +87,18 @@ void main() {
         'The type of the Map key must be `String`, `Object` or `dynamic`.';
 
     test('for toJson in Map key', () async {
-      expect(_runForElementNamed('NoSerializeBadKey'),
-          throwsInvalidGenerationSourceError(mapKeyFyi, 'Make sure all of the types are serializable.'));
+      expect(
+          _runForElementNamed('NoSerializeBadKey'),
+          throwsInvalidGenerationSourceError(
+              mapKeyFyi, 'Make sure all of the types are serializable.'));
     });
 
     test('for fromJson', () async {
       expect(
           _runForElementNamed('NoDeserializeBadKey'),
           throwsInvalidGenerationSourceError(
-              mapKeyFyi.replaceFirst('toJson', 'fromJson'), 'Make sure all of the types are serializable.'));
+              mapKeyFyi.replaceFirst('toJson', 'fromJson'),
+              'Make sure all of the types are serializable.'));
     });
   });
 
@@ -99,8 +110,7 @@ void main() {
   group('valid inputs', () {
     test('class with no ctor params', () async {
       var output = await _runForElementNamed('Person');
-      expect(
-          output,
+      expect(output,
           r'''Person _$PersonFromJson(Map<String, dynamic> json) => new Person()
   ..firstName = json['firstName'] as String
   ..lastName = json['lastName'] as String
@@ -110,7 +120,8 @@ void main() {
       : DateTime.parse(json['dateOfBirth'] as String)
   ..dynamicType = json['dynamicType']
   ..varType = json['varType']
-  ..listOfInts = (json['listOfInts'] as List)?.map((e) => e as int)?.toList();
+  ..listOfInts =
+      (json['listOfInts'] as List)?.map((dynamic e) => e as int)?.toList();
 
 abstract class _$PersonSerializerMixin {
   String get firstName;
@@ -135,8 +146,7 @@ abstract class _$PersonSerializerMixin {
 
     test('class with ctor params', () async {
       var output = await _runForElementNamed('Order');
-      expect(
-          output,
+      expect(output,
           r'''Order _$OrderFromJson(Map<String, dynamic> json) => new Order(
     json['height'] as int,
     json['firstName'] as String,
@@ -182,7 +192,8 @@ abstract class _$OrderSerializerMixin {
     test('class with list of int is cast for strong mode', () async {
       var output = await _runForElementNamed('Person');
 
-      expect(output, contains("json['listOfInts'] as List)?.map((dynamic e) => e as int)"));
+      expect(output,
+          contains("json['listOfInts'] as List)?.map((dynamic e) => e as int)"));
     });
   });
 
@@ -198,14 +209,16 @@ abstract class _$OrderSerializerMixin {
       expect(
           () => _runForElementNamed('KeyDupesField'),
           throwsInvalidGenerationSourceError(
-              'More than one field has the JSON key `str`.', 'Check the `JsonKey` annotations on fields.'));
+              'More than one field has the JSON key `str`.',
+              'Check the `JsonKey` annotations on fields.'));
     });
 
     test('fails if two names collide', () async {
       expect(
           () => _runForElementNamed('DupeKeys'),
           throwsInvalidGenerationSourceError(
-              'More than one field has the JSON key `a`.', 'Check the `JsonKey` annotations on fields.'));
+              'More than one field has the JSON key `a`.',
+              'Check the `JsonKey` annotations on fields.'));
     });
   });
 
@@ -227,7 +240,9 @@ abstract class _$OrderSerializerMixin {
     expect(
         () => _runForElementNamed('NoCtorClass'),
         throwsA(new FeatureMatcher<UnsupportedError>(
-            'message', (e) => e.message, 'The class `NoCtorClass` has no default constructor.')));
+            'message',
+            (e) => e.message,
+            'The class `NoCtorClass` has no default constructor.')));
   });
 }
 
@@ -239,7 +254,8 @@ Future<String> _runForElementNamed(String name) async {
   var library = new LibraryReader(_compUnit.element.library);
   var element = library.allElements.singleWhere((e) => e.name == name);
   var annotation = _generator.typeChecker.firstAnnotationOf(element);
-  var generated = await _generator.generateForAnnotatedElement(element, new ConstantReader(annotation), null);
+  var generated = await _generator.generateForAnnotatedElement(
+      element, new ConstantReader(annotation), null);
 
   return _formatter.format(generated);
 }
@@ -247,7 +263,8 @@ Future<String> _runForElementNamed(String name) async {
 Future<CompilationUnit> _getCompilationUnitForString(String projectPath) async {
   var source = new StringSource(_testSource, 'test content');
 
-  var foundFiles = await getDartFiles(projectPath, searchList: [p.join(getPackagePath(), 'test', 'test_files')]);
+  var foundFiles = await getDartFiles(projectPath,
+      searchList: [p.join(getPackagePath(), 'test', 'test_files')]);
 
   var context = await getAnalysisContextForProjectPath(projectPath, foundFiles);
 
