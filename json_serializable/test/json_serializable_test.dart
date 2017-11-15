@@ -121,7 +121,7 @@ void main() {
   ..dynamicType = json['dynamicType']
   ..varType = json['varType']
   ..listOfInts =
-      (json['listOfInts'] as List)?.map((int e) => e as int)?.toList();
+      (json['listOfInts'] as List)?.map((dynamic e) => e as int)?.toList();
 
 abstract class _$PersonSerializerMixin {
   String get firstName;
@@ -193,7 +193,7 @@ abstract class _$OrderSerializerMixin {
       var output = await _runForElementNamed('Person');
 
       expect(output,
-          contains("json['listOfInts'] as List)?.map((int e) => e as int)"));
+          contains("json['listOfInts'] as List)?.map((dynamic e) => e as int)"));
     });
   });
 

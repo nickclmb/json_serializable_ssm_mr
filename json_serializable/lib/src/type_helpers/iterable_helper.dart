@@ -67,7 +67,7 @@ class IterableHelper extends TypeHelper {
     var optionalQuestion = nullable ? '?' : '';
 
     var output =
-        '($expression as List)${optionalQuestion}.map((${iterableGenericType.toString()} $_closureArg) => $itemSubVal)';
+        '($expression as List)${optionalQuestion}.map((dynamic $_closureArg) => $itemSubVal)';
 
     if (_coreListChecker.isAssignableFromType(targetType)) {
       output += '${optionalQuestion}.toList()';
