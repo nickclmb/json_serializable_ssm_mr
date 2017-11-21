@@ -12,7 +12,7 @@ env:
   - PKG=json_serializable TASK=dartfmt
   - PKG=json_serializable TASK=test
 
-matrix:
+matrix: 
   exclude:
     - dart: stable
       env: PKG=json_serializable TASK=dartanalyzer
