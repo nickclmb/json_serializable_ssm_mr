@@ -110,7 +110,8 @@ void main() {
   group('valid inputs', () {
     test('class with no ctor params', () async {
       var output = await _runForElementNamed('Person');
-      expect(output,
+      expect(
+          output,
           r'''Person _$PersonFromJson(Map<String, dynamic> json) => new Person()
   ..firstName = json['firstName'] as String
   ..lastName = json['lastName'] as String
@@ -145,7 +146,8 @@ abstract class _$PersonSerializerMixin {
 
     test('class with ctor params', () async {
       var output = await _runForElementNamed('Order');
-      expect(output,
+      expect(
+          output,
           r'''Order _$OrderFromJson(Map<String, dynamic> json) => new Order(
     json['height'] as int,
     json['firstName'] as String,
